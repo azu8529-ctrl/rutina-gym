@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rutina Gym 5 Días</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0d0d0d; color: #f0f0f0; font-family: 'Inter', 'Helvetica Neue', sans-serif; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #111; }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const days = [
+      {
+        id: 1, label: "DÍA 1", name: "Pecho + Tríceps", tag: "Empuje", color: "#E8472A", icon: "💪",
+        focus: "Hipertrofia — fuerza base",
+        exercises: [
+          { name: "Press de banca con barra", sets: "4", reps: "6–8", rest: "2–3 min", note: "Control excéntrico 3s. Progresión lineal obligatoria." },
+          { name: "Press inclinado con mancuernas", sets: "3", reps: "10–12", rest: "90 s", note: "Ángulo 30–45°. Máximo rango de movimiento." },
+          { name: "Aperturas en polea alta (crossover)", sets: "3", reps: "12–15", rest: "60 s", note: "Enfocarse en la contracción pectoral, no en el peso." },
+          { name: "Fondos en paralelas (lastre si es posible)", sets: "3", reps: "8–10", rest: "90 s", note: "Inclinación leve al frente para mayor activación pectoral." },
+          { name: "Press francés con barra EZ", sets: "3", reps: "10–12", rest: "75 s", note: "Codos fijos. No bloquear en extensión completa." },
+          { name: "Extensión de tríceps en polea (cuerda)", sets: "3", reps: "12–15", rest: "60 s", note: "Separar la cuerda al final. Apriete isométrico." },
+        ],
+        notes: "Calienta 10 min: movilidad de hombro + 2 series ligeras de press. Finaliza con 15 min de cardio LISS (caminata inclinada 8–10%).",
+      },
+      {
+        id: 2, label: "DÍA 2", name: "Espalda + Bíceps", tag: "Jalón", color: "#2A6AE8", icon: "🏋️",
+        focus: "Hipertrofia — amplitud y grosor",
+        exercises: [
+          { name: "Peso muerto convencional", sets: "4", reps: "5–6", rest: "3 min", note: "Movimiento rey del día. Cinturón en últimas 2 series. Espalda neutra siempre." },
+          { name: "Remo con barra (pronada)", sets: "4", reps: "8–10", rest: "2 min", note: "Tirón hasta el abdomen bajo. Control en la bajada." },
+          { name: "Jalón al pecho en polea (agarre ancho)", sets: "3", reps: "10–12", rest: "90 s", note: "Pecho afuera, ligera extensión torácica. No balancear." },
+          { name: "Remo en polea baja (agarre neutro)", sets: "3", reps: "12–15", rest: "75 s", note: "Apriete escapular al final. Extensión torácica controlada." },
+          { name: "Curl de bíceps con barra EZ", sets: "3", reps: "10–12", rest: "75 s", note: "Sin impulso de cadera. Excéntrico lento 2–3s." },
+          { name: "Curl martillo con mancuernas (alterno)", sets: "3", reps: "12 c/lado", rest: "60 s", note: "Activa braquial y braquiorradial. Suplementa el pico del bíceps." },
+        ],
+        notes: "Calienta la cadena posterior: buenos días sin peso + movilidad de cadera. 15 min cardio LISS al final.",
+      },
+      {
+        id: 3, label: "DÍA 3", name: "Piernas — Cuádriceps", tag: "Tren inferior A", color: "#22B84A", icon: "🦵",
+        focus: "Fuerza + volumen — cuádriceps y glúteos",
+        exercises: [
+          { name: "Sentadilla libre con barra (back squat)", sets: "4", reps: "6–8", rest: "2–3 min", note: "Profundidad por debajo del paralelo. Rodillas en línea con pies." },
+          { name: "Prensa 45° (feet high & wide)", sets: "3", reps: "10–12", rest: "90 s", note: "Rango completo. No bloquear rodillas arriba. Mayor activación glútea con pies altos." },
+          { name: "Extensión de cuádriceps en máquina", sets: "3", reps: "12–15", rest: "60 s", note: "Isométrico de 2s arriba. Excéntrico controlado." },
+          { name: "Zancadas con mancuernas (caminando)", sets: "3", reps: "10 pasos c/pierna", rest: "90 s", note: "Rodilla trasera casi toca el suelo. Torso erguido." },
+          { name: "Pantorrillas de pie en máquina", sets: "4", reps: "15–20", rest: "60 s", note: "Rango completo obligatorio. Pausa de 2s en extensión máxima." },
+          { name: "Plancha lateral + crunch en polea", sets: "3", reps: "30s + 15 reps", rest: "60 s", note: "Core estabilizador. Refuerza postura en sentadilla." },
+        ],
+        notes: "Día más exigente físicamente. Calienta con bicicleta 8 min + movilidad de cadera/tobillo. Sin cardio este día.",
+      },
+      {
+        id: 4, label: "DÍA 4", name: "Hombros + Trapecios", tag: "Empuje vertical", color: "#C42AE8", icon: "🎯",
+        focus: "Anchura + definición — deltoide lateral prioritario",
+        exercises: [
+          { name: "Press militar con barra (de pie)", sets: "4", reps: "6–8", rest: "2–3 min", note: "Núcleo activo. No hiperextender lumbar. Barra baja a barbilla." },
+          { name: "Elevaciones laterales con mancuernas", sets: "4", reps: "12–15", rest: "60 s", note: "Ejercicio más importante para anchura. Codos ligeramente flexionados. Sin inercia." },
+          { name: "Press Arnold con mancuernas", sets: "3", reps: "10–12", rest: "90 s", note: "Rotación completa en el recorrido. Activa los 3 fascículos deltoideos." },
+          { name: "Elevación frontal en polea baja", sets: "3", reps: "12–15", rest: "60 s", note: "Tensión constante. Menos riesgo articular que con mancuerna." },
+          { name: "Encogimientos con barra (shrugs)", sets: "4", reps: "12–15", rest: "60 s", note: "Pausa de 1s arriba. Movimiento vertical puro, sin girar." },
+          { name: "Face pulls en polea (cuerda a la frente)", sets: "3", reps: "15–20", rest: "60 s", note: "Fundamental para salud rotacional del hombro. No omitir nunca." },
+        ],
+        notes: "Face pulls son preventivos: nunca omitirlos. Calienta con rotaciones de manguito. 15 min cardio HIIT 1:2 (20s sprint / 40s recuperación) × 8 rondas.",
+      },
+      {
+        id: 5, label: "DÍA 5", name: "Piernas — Isquiotibiales", tag: "Tren inferior B", color: "#E8A42A", icon: "🔥",
+        focus: "Fuerza posterior — isquiotibiales, glúteos, femorales",
+        exercises: [
+          { name: "Peso muerto rumano con barra", sets: "4", reps: "8–10", rest: "2–3 min", note: "La cadera como bisagra. Espalda neutra siempre. Sentir el estiramiento isquiotibial." },
+          { name: "Curl femoral acostado en máquina", sets: "4", reps: "10–12", rest: "90 s", note: "Excéntrico 3s. Isométrico 1s. Activación superior al curl sentado." },
+          { name: "Hip thrust con barra (glúteo)", sets: "4", reps: "10–12", rest: "90 s", note: "Máximo activador de glúteo. Rodillas a 90° arriba. Pelvis en retroversión." },
+          { name: "Sentadilla búlgara (split squat)", sets: "3", reps: "10 c/pierna", rest: "90 s", note: "Gran demanda unilateral. Expone desequilibrios. Torso inclinado levemente al frente." },
+          { name: "Curl nórdico (Nordic curl)", sets: "3", reps: "4–6 reps", rest: "2 min", note: "Prevención de lesiones de isquiotibiales. Excéntrico de alta tensión." },
+          { name: "Abducción de cadera en máquina", sets: "3", reps: "15–20", rest: "60 s", note: "Activa glúteo medio. Mejora estabilidad pélvica y postura en sentadilla." },
+        ],
+        notes: "Cierra la semana fuerte. Calienta la cadena posterior igual que el día 2. 20 min cardio LISS al final como activo de recuperación.",
+      },
+    ];
+
+    const principles = [
+      { icon: "📈", title: "Progresión de carga", desc: "Aumenta 2.5 kg por ejercicio compuesto cuando completes todas las series en el rango superior de reps con buena técnica." },
+      { icon: "😴", title: "Descanso y recuperación", desc: "7–9 horas de sueño. Los días libres son activos: caminata, movilidad o yoga." },
+      { icon: "🥩", title: "Nutrición — proteína", desc: "1.6–2.2 g de proteína por kg de peso corporal. Para 80 kg = 128–176 g/día distribuida en 4–5 comidas." },
+      { icon: "⚡", title: "Déficit calórico moderado", desc: "−300 a −500 kcal sobre tu TDEE. Suficiente para quemar grasa sin sacrificar músculo. Recalcula cada 4 semanas." },
+      { icon: "🔄", title: "Deload cada 6–8 semanas", desc: "Reduce volumen al 50% pero mantén intensidad. Crucial a los 40 años para longevidad y evitar sobreentrenamiento." },
+      { icon: "💧", title: "Hidratación", desc: "Mínimo 35 ml por kg de peso corporal/día. El rendimiento cae con solo 2% de deshidratación." },
+    ];
+
+    function App() {
+      const [activeDay, setActiveDay] = useState(0);
+      const [completedSets, setCompletedSets] = useState({});
+      const [tab, setTab] = useState("routine");
+
+      const day = days[activeDay];
+
+      const toggleSet = (exIdx, setIdx) => {
+        const key = `${activeDay}-${exIdx}-${setIdx}`;
+        setCompletedSets(prev => ({ ...prev, [key]: !prev[key] }));
+      };
+
+      const isDone = (exIdx, setIdx) => !!completedSets[`${activeDay}-${exIdx}-${setIdx}`];
+
+      const totalSets = day.exercises.reduce((acc, ex) => acc + parseInt(ex.sets), 0);
+      const doneSets = day.exercises.reduce((acc, ex, ei) =>
+        acc + Array.from({ length: parseInt(ex.sets) }, (_, si) => isDone(ei, si) ? 1 : 0).reduce((a, b) => a + b, 0), 0);
+      const progress = totalSets > 0 ? Math.round((doneSets / totalSets) * 100) : 0;
+
+      return (
+        <div style={{ minHeight: "100vh", background: "#0d0d0d", color: "#f0f0f0", fontFamily: "'Inter', 'Helvetica Neue', sans-serif" }}>
+          {/* Header */}
+          <div style={{ background: "#111", borderBottom: "1px solid #222", padding: "20px 20px 0" }}>
+            <div style={{ maxWidth: 680, margin: "0 auto" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
+                <div style={{ width: 7, height: 7, borderRadius: "50%", background: day.color, boxShadow: `0 0 10px ${day.color}` }} />
+                <span style={{ fontSize: 10, letterSpacing: "0.18em", color: "#555", textTransform: "uppercase" }}>Programa de Hipertrofia & Recomposición</span>
+              </div>
+              <h1 style={{ fontSize: 20, fontWeight: 800, margin: "0 0 16px", letterSpacing: "-0.02em" }}>
+                Rutina 5 Días — Hombre 40 años
+              </h1>
+              <div style={{ display: "flex", gap: 0 }}>
+                {["routine", "principles"].map(t => (
+                  <button key={t} onClick={() => setTab(t)} style={{
+                    padding: "10px 18px", background: "none", border: "none", cursor: "pointer",
+                    color: tab === t ? "#fff" : "#555", fontWeight: tab === t ? 700 : 400,
+                    borderBottom: tab === t ? `2px solid ${day.color}` : "2px solid transparent",
+                    fontSize: 13, transition: "all 0.2s", letterSpacing: "0.02em"
+                  }}>
+                    {t === "routine" ? "🏋️ Rutina" : "📋 Principios"}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div style={{ maxWidth: 680, margin: "0 auto", padding: "20px 14px" }}>
+            {tab === "routine" ? (
+              <>
+                {/* Day selector */}
+                <div style={{ display: "flex", gap: 8, marginBottom: 20, overflowX: "auto", paddingBottom: 4 }}>
+                  {days.map((d, i) => (
+                    <button key={d.id} onClick={() => setActiveDay(i)} style={{
+                      flexShrink: 0, padding: "7px 13px", borderRadius: 9,
+                      border: activeDay === i ? `1.5px solid ${d.color}` : "1.5px solid #2a2a2a",
+                      background: activeDay === i ? `${d.color}18` : "#161616",
+                      color: activeDay === i ? d.color : "#555",
+                      cursor: "pointer", fontSize: 11, fontWeight: 700, letterSpacing: "0.06em",
+                      transition: "all 0.2s"
+                    }}>
+                      {d.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Day header */}
+                <div style={{ background: "#161616", border: `1px solid ${day.color}30`, borderRadius: 14, padding: "18px 20px", marginBottom: 16 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}>
+                    <div>
+                      <span style={{ fontSize: 26 }}>{day.icon}</span>
+                      <h2 style={{ fontSize: 18, fontWeight: 800, margin: "6px 0 6px", letterSpacing: "-0.01em" }}>{day.name}</h2>
+                      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                        <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 20, background: `${day.color}22`, color: day.color, fontWeight: 700, letterSpacing: "0.08em" }}>
+                          {day.tag}
+                        </span>
+                        <span style={{ fontSize: 10, padding: "3px 10px", borderRadius: 20, background: "#2a2a2a", color: "#777", fontWeight: 600 }}>
+                          {day.focus}
+                        </span>
+                      </div>
+                    </div>
+                    {/* Progress ring */}
+                    <div style={{ textAlign: "center" }}>
+                      <div style={{ position: "relative", width: 54, height: 54 }}>
+                        <svg viewBox="0 0 54 54" style={{ width: 54, height: 54, transform: "rotate(-90deg)" }}>
+                          <circle cx="27" cy="27" r="21" fill="none" stroke="#2a2a2a" strokeWidth="4" />
+                          <circle cx="27" cy="27" r="21" fill="none" stroke={day.color} strokeWidth="4"
+                            strokeDasharray={`${2 * Math.PI * 21}`}
+                            strokeDashoffset={`${2 * Math.PI * 21 * (1 - progress / 100)}`}
+                            style={{ transition: "stroke-dashoffset 0.4s" }} />
+                        </svg>
+                        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: day.color }}>
+                          {progress}%
+                        </div>
+                      </div>
+                      <div style={{ fontSize: 10, color: "#555", marginTop: 3 }}>{doneSets}/{totalSets} series</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Exercises */}
+                {day.exercises.map((ex, ei) => (
+                  <div key={ei} style={{ background: "#161616", border: "1px solid #222", borderRadius: 12, padding: "16px 18px", marginBottom: 10 }}>
+                    <div style={{ marginBottom: 10 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: day.color, letterSpacing: "0.1em" }}>#{String(ei + 1).padStart(2, "0")}</span>
+                        <h3 style={{ fontSize: 14, fontWeight: 700, margin: 0, letterSpacing: "-0.01em" }}>{ex.name}</h3>
+                      </div>
+                      <div style={{ display: "flex", gap: 12, fontSize: 11, color: "#777" }}>
+                        <span>📊 {ex.sets} series × {ex.reps} reps</span>
+                        <span>⏱ {ex.rest}</span>
+                      </div>
+                    </div>
+                    {/* Set tracker */}
+                    <div style={{ display: "flex", gap: 6, marginBottom: 10, flexWrap: "wrap" }}>
+                      {Array.from({ length: parseInt(ex.sets) }, (_, si) => (
+                        <button key={si} onClick={() => toggleSet(ei, si)} style={{
+                          width: 38, height: 38, borderRadius: 8,
+                          border: isDone(ei, si) ? `1.5px solid ${day.color}` : "1.5px solid #333",
+                          background: isDone(ei, si) ? `${day.color}22` : "#1e1e1e",
+                          color: isDone(ei, si) ? day.color : "#555",
+                          cursor: "pointer", fontSize: 14, fontWeight: 700, transition: "all 0.15s"
+                        }}>
+                          {isDone(ei, si) ? "✓" : si + 1}
+                        </button>
+                      ))}
+                    </div>
+                    <div style={{ fontSize: 11, color: "#666", background: "#1a1a1a", borderRadius: 8, padding: "8px 12px", lineHeight: 1.55, borderLeft: `2px solid ${day.color}40` }}>
+                      💡 {ex.note}
+                    </div>
+                  </div>
+                ))}
+
+                {/* Day notes */}
+                <div style={{ background: `${day.color}10`, border: `1px solid ${day.color}30`, borderRadius: 12, padding: "14px 18px", marginTop: 6 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: day.color, marginBottom: 6, letterSpacing: "0.06em" }}>📝 NOTAS DEL DÍA</div>
+                  <p style={{ fontSize: 12, color: "#999", margin: 0, lineHeight: 1.6 }}>{day.notes}</p>
+                </div>
+              </>
+            ) : (
+              <>
+                <h2 style={{ fontSize: 17, fontWeight: 800, marginBottom: 16, letterSpacing: "-0.01em" }}>Principios Científicos Clave</h2>
+                <div style={{ background: "#161616", border: "1px solid #222", borderRadius: 12, padding: "14px 18px", marginBottom: 16 }}>
+                  <p style={{ fontSize: 12, color: "#888", margin: 0, lineHeight: 1.7 }}>
+                    Esta rutina aplica <strong style={{ color: "#ddd" }}>sobrecarga progresiva</strong>, <strong style={{ color: "#ddd" }}>especificidad</strong> y <strong style={{ color: "#ddd" }}>recuperación adaptativa</strong> — los tres pilares del entrenamiento basado en evidencia. La distribución <em>push/pull/legs</em> optimiza la frecuencia de cada grupo muscular (2×/semana).
+                  </p>
+                </div>
+                {principles.map((p, i) => (
+                  <div key={i} style={{ background: "#161616", border: "1px solid #222", borderRadius: 12, padding: "16px 18px", marginBottom: 10, display: "flex", gap: 14 }}>
+                    <span style={{ fontSize: 24, flexShrink: 0 }}>{p.icon}</span>
+                    <div>
+                      <h3 style={{ fontSize: 13, fontWeight: 700, margin: "0 0 5px", letterSpacing: "-0.01em" }}>{p.title}</h3>
+                      <p style={{ fontSize: 12, color: "#888", margin: 0, lineHeight: 1.6 }}>{p.desc}</p>
+                    </div>
+                  </div>
+                ))}
+                {/* Weekly schedule */}
+                <div style={{ background: "#161616", border: "1px solid #2a2a2a", borderRadius: 12, padding: "18px", marginTop: 16 }}>
+                  <h3 style={{ fontSize: 11, fontWeight: 700, marginBottom: 14, letterSpacing: "0.1em", color: "#666", textTransform: "uppercase" }}>Distribución Semanal</h3>
+                  {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"].map((d, i) => {
+                    const dayData = i < 5 ? days[i] : null;
+                    return (
+                      <div key={d} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+                        <span style={{ fontSize: 11, color: "#555", width: 76, flexShrink: 0 }}>{d}</span>
+                        {dayData ? (
+                          <div style={{ flex: 1, background: `${dayData.color}18`, border: `1px solid ${dayData.color}30`, borderRadius: 8, padding: "6px 12px", fontSize: 11, color: dayData.color, fontWeight: 600 }}>
+                            {dayData.icon} {dayData.name}
+                          </div>
+                        ) : (
+                          <div style={{ flex: 1, background: "#1a1a1a", borderRadius: 8, padding: "6px 12px", fontSize: 11, color: "#444", fontStyle: "italic" }}>
+                            🌿 Descanso activo — movilidad / caminata
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
+</body>
+</html>
